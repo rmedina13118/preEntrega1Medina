@@ -34,6 +34,7 @@ const products = [
 
 for (let i = 0; i < products.length; i++) {
     alert(`=====${products[i].productName.toUpperCase()}=====
+    ID del producto: ${products[i].id}
 
     ${products[i].desc}
 
@@ -41,23 +42,71 @@ for (let i = 0; i < products.length; i++) {
 
     Unidades disponibles:  ${products[i].stock} `)
 }
+//declaración de variable para almacenar el precio final y continuar
+let finalPrice = 0
+let returnShopping = true
+let purchaseSummary = ""
 
-//Capturamos el nombre del producto que el usuario desea comprar
-let name_product = products.productName
-let product = prompt("Ingresa el nombre del producto que deseas comprar:").toUpperCase()
+while (returnShopping) {
+    let continueShopping = true
+    while (continueShopping) {
+        let productId = parseInt(prompt("Escribe el ID del producto que deseas comprar: "))
 
-if ( product === name_product){
-    product.stock -= 1
-    alert(`El producto ${product} ha sido agregado al carrito`)
-    console.log(`Producto ${product} agregado al carrito `);
-    
-    confirm(`¿Deseas seguir comprando? oprime aceptar para continuar o cancelar para continuar finalizar la compra`)
-}else{
-    alert(`¡Lo Sentimos!😔 El producto no esta disponible en nuestra tienda`)
-    confirm(`¿Deseas seguir comprando? oprime aceptar para continuar o cancelar para finalizar la compra`)
+        if (!productId) {
+            continueShopping = false
+            alert("Gracias por visitarnos, vuelve pronto 👋")
+            break
+        }
+
+        let productFound = false //variable que maneja la existencia del producto
+
+        for (let i = 0; i < products.length; i++) {
+            if (products[i].id === productId) {
+                productFound = true
+                let qtyProduct = parseInt(prompt("¿Cuantas unidades deseas comprar?"))
+
+                //Verificar unidades suficientes en stock
+                if (qtyProduct > products[i].stock) {
+                    alert(`Lo siento 🙁, no tenemos la cantidad solicitada de: ${products[i].productName}el stock disponible es: ${products[i].stock} Unidad(es)`)
+                } else { // Resta del stock y suma al precio final
+                    products[i].stock -= qtyProduct
+                    finalPrice += products[i].price * qtyProduct
+                    purchaseSummary += `Producto: ${products[i].productName} x ${qtyProduct}    Unidad(es)\n`
+                    alert(`¡Hurra!🎉 Agregaste el siguiente producto: ${products[i].productName} x ${qtyProduct} Unidad(es)`)
+                }
+                break
+            }
+        }
+        if (!productFound) {
+            alert("Lo siento 🙁, el ID ingresado no existe. Intenta nuevamente 💪")
+        } else {
+            let buyMore = confirm("¿Deseas comprar algo más?")
+            if (!buyMore) {
+                continueShopping = false
+            }
+        }
+    }
+
+
+    let buyReturn = confirm("deberias agregar algo más 🧐")
+    if (!buyReturn) {
+        returnShopping = false
+    }
+
 }
 
+//Resumén de la compra
+
+if (finalPrice > 0) {
+    alert(`Gracias por tu compra ${fullName},
+        El resumen de tu compra es: 
+        ${purchaseSummary} 
+        el precio final de tu compra es: 
+        $${finalPrice}`)
 
 
-
-
+        alert("¡Gracias por elegirnos! ❤")
+} else {
+    alert(`Oops!😮
+           ${fullName} parece que no realizaste ninguna compra.`)
+}
